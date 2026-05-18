@@ -1,72 +1,85 @@
-// Floyd-Warshall algorithm
 #include <stdio.h>
-#define INF 999
+#define inf 1000
 
-int main() {
-    int n, i, j, k;
+int main()
+{
+    int n;
     int cost[10][10], dist[10][10], next[10][10];
 
-    printf("Enter number of routers: ");
+    printf("How many routers? ");
     scanf("%d", &n);
 
-    printf("Enter cost matrix (999 for infinity):\n");
-    for (i = 0; i < n; i++) {
-        for (j = 0; j < n; j++) {
+    printf("Enter initial Routing Table:\n");
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
             scanf("%d", &cost[i][j]);
-            dist[i][j] = cost[i][j];
 
-            if (i == j)
-                next[i][j] = i;
-            else if (cost[i][j] != INF)
-                next[i][j] = j;
-            else
+            if (cost[i][j] == -1)
+            {
+                cost[i][j] = inf;
+                dist[i][j] = inf;
                 next[i][j] = -1;
+            }
+            else
+            {
+                dist[i][j] = cost[i][j];
+                next[i][j] = j;
+            }
         }
     }
 
-    /* Distance Vector Routing Algorithm */
-    for (k = 0; k < n; k++) {
-        for (i = 0; i < n; i++) {
-            for (j = 0; j < n; j++) {
-                if (dist[i][k] + dist[k][j] < dist[i][j]) {
+    /* Distance Vector Algorithm */
+    for (int k = 0; k < n; k++)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                if (dist[i][k] + dist[k][j] < dist[i][j])
+                {
                     dist[i][j] = dist[i][k] + dist[k][j];
-                    next[i][j] = next[i][k]; // first hop
+                    next[i][j] = next[i][k];
                 }
             }
         }
     }
 
-    /* Print Routing Tables */
-    for (i = 0; i < n; i++) {
-        printf("\nRouter %d\n", i);
+    /* Routing Tables */
+    for (int i = 0; i < n; i++)
+    {
+        printf("\nRouter %d:\n", i);
         printf("Destination Distance NextRouter\n");
 
-        for (j = 0; j < n; j++) {
-            printf("%5d", j);
-
-            if (dist[i][j] >= INF)
-                printf("%11d", -1);
+        for (int j = 0; j < n; j++)
+        {
+            if (dist[i][j] >= inf)
+                printf("%5d %10d %10d\n", j, -1, -1);
             else
-                printf("%11d", dist[i][j]);
-
-            printf("%12d\n", next[i][j]);
+                printf("%5d %10d %10d\n", j, dist[i][j], next[i][j]);
         }
     }
 
-    /* Print Final Cost Matrix */
-    printf("Final Cost Matrix:\n ");
-    for (i = 0; i < n; i++)
+    /* Cost Matrix */
+    printf("\nCost Matrix:\n ");
+    for (int i = 0; i < n; i++)
         printf("%4d", i);
 
-    printf("\n---------------------------------\n");
+    printf("\n----------------------------------\n");
 
-    for (i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++)
+    {
         printf("%2d |", i);
-        for (j = 0; j < n; j++) {
-            printf("%4d", dist[i][j]);
+        for (int j = 0; j < n; j++)
+        {
+            if (dist[i][j] >= inf)
+                printf("%4d", -1);
+            else
+                printf("%4d", dist[i][j]);
         }
         printf("\n");
     }
 
     return 0;
-}
+}-
